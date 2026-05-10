@@ -14,7 +14,7 @@ export default function LoginScreen() {
     const savedPassword = await getPassword();
     
     if (username === 'user' && password === savedPassword) {
-      router.replace('/(tabs)');
+      router.replace('/dashboard');
     } else {
       Alert.alert('Login Gagal', 'Username atau Password salah');
     }
