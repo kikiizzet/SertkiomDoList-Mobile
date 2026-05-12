@@ -49,6 +49,9 @@ export default function TaskListScreen() {
           </Text>
           <Text style={styles.taskDate}>
             {new Date(item.due_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })} - {item.category}
+            {item.is_completed === 1 && item.completed_at > item.due_date && (
+              <Text style={{ color: Colors.important, fontWeight: 'bold' }}> - TERLAMBAT</Text>
+            )}
           </Text>
         </View>
 

@@ -26,6 +26,7 @@ export default function LoginScreen() {
         <View style={styles.iconCircle}>
           <ClipboardList size={60} color={Colors.primary} />
         </View>
+        
         <Text style={styles.appName}>Agenda Nusantara</Text>
         <Text style={styles.tagline}>Kelola tugasmu, raih harimu</Text>
       </View>

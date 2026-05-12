@@ -65,8 +65,8 @@ export default function SettingsScreen() {
             <User size={40} color={Colors.gray} />
           </View>
           <View style={styles.devInfo}>
-            <Text style={styles.devName}>Nama Mahasiswa: Muhammad Syauqi Izzet Sakovic</Text>
-            <Text style={styles.devNim}>NIM: 254107067004</Text>
+            <Text style={styles.devName}>Muhammad Syauqi Izzet Sakovic</Text>
+            <Text style={styles.devNim}>254107067004</Text>
             <Text style={styles.devBadge}>DEVELOPER APLIKASI</Text>
           </View>
         </View>

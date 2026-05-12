@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, Alert } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { PlusSquare, List, Settings, CheckCircle2, Clock } from 'lucide-react-native';
 import { getSummary } from '../lib/database';
@@ -49,17 +49,55 @@ export default function DashboardScreen() {
         </View>
 
         <View style={styles.chartPlaceholder}>
-          <Text style={styles.chartTitle}>TUGAS SELESAI / HARI (BONUS)</Text>
+          <Text style={styles.chartTitle}>AGENDA MINGGU INI (BERDASARKAN DEADLINE)</Text>
           <View style={styles.chartBarContainer}>
-            {/* Simple mock chart */}
-            {[4, 7, 2, 8, 5, 10, 6].map((val, i) => (
-              <View key={i} style={[styles.chartBar, { height: val * 10 }]} />
-            ))}
-          </View>
-          <View style={styles.chartLabelRow}>
-            {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map((day, i) => (
-              <Text key={i} style={styles.chartDayLabel}>{day}</Text>
-            ))}
+            {summary.dailyStats && summary.dailyStats.length > 0 ? (
+              summary.dailyStats.map((stat, i) => {
+                const maxCount = Math.max(...summary.dailyStats.map(s => s.count), 1);
+                const height = stat.count > 0 ? Math.max((stat.count / maxCount) * 100, 10) : 0;
+                
+                // Color logic
+                let barColor = '#E5E7EB'; // Default gray for no tasks
+                if (stat.count > 0) {
+                  if (stat.completedCount === stat.count) {
+                    // All completed
+                    barColor = stat.lateCount > 0 ? Colors.important : Colors.primary;
+                  } else {
+                    // Some pending
+                    barColor = '#94A3B8'; 
+                  }
+                }
+                
+                const handlePress = () => {
+                  if (stat.count > 0) {
+                    Alert.alert(
+                      `Agenda ${stat.day}`,
+                      `Total Tugas: ${stat.count}\nSelesai: ${stat.completedCount}\nTerlambat: ${stat.lateCount}\nBelum Selesai: ${stat.count - stat.completedCount}`
+                    );
+                  }
+                };
+
+                return (
+                  <TouchableOpacity 
+                    key={i} 
+                    style={styles.chartCol} 
+                    onPress={handlePress}
+                    activeOpacity={0.7}
+                  >
+                    <View style={[
+                      styles.chartBar, 
+                      { height: height, backgroundColor: barColor },
+                      stat.isToday && { borderWidth: 2, borderColor: Colors.text }
+                    ]} />
+                    <Text style={[styles.chartDayLabel, stat.isToday && { fontWeight: 'bold', color: Colors.text }]}>
+                      {stat.day}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })
+            ) : (
+              <Text style={styles.emptyChartText}>Belum ada data tugas</Text>
+            )}
           </View>
         </View>
 
@@ -185,25 +223,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    height: 120,
-    paddingHorizontal: 10,
+    height: 150,
+    paddingHorizontal: 5,
+  },
+  chartCol: {
+    alignItems: 'center',
+    flex: 1,
   },
   chartBar: {
-    width: 20,
+    width: 15,
     backgroundColor: Colors.primary,
     borderRadius: 4,
-    opacity: 0.7,
-  },
-  chartLabelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
+    opacity: 0.8,
+    marginBottom: 8,
   },
   chartDayLabel: {
     fontSize: 10,
     color: Colors.gray,
-    width: 30,
     textAlign: 'center',
+  },
+  emptyChartText: {
+    flex: 1,
+    textAlign: 'center',
+    color: Colors.gray,
+    fontSize: 12,
+    paddingVertical: 20,
   },
   menuGrid: {
     flexDirection: 'row',
